@@ -18,9 +18,7 @@
  * 
  */
 typedef struct listaEnlazadaSimple{
-    int dato1;
-    char *dato2;
-
+    int dato;
     struct listaEnlazadaSimple *sig;
 }listaEnlazadaSimple;
 
@@ -30,27 +28,24 @@ typedef struct listaEnlazadaSimple{
  * @brief Añade un elemento al inicio de la lista
  * 
  * @param L Es la lista a añadir el elemento
- * @param dato1 El dato 1 que se le añade
- * @param dato2 El dato 2 que se le añade
+ * @param dato1 El dato que se le añade
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_start(listaEnlazadaSimple *L, int dato1, char *dato2){
+listaEnlazadaSimple *add_start(listaEnlazadaSimple *L, int dato){
     
     if(L != NULL){
         listaEnlazadaSimple *aux;
 
         aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-        aux->dato1 = dato1;
-        aux->dato2 = dato2;
+        aux->dato = dato;
         aux->sig = L;
 
         return aux;
     }
     else{
         L = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-        L->dato1 = dato1;
-        L->dato2 = dato2;
+        L->dato = dato;
         L->sig = NULL;
 
         return L;
@@ -61,12 +56,11 @@ listaEnlazadaSimple *add_start(listaEnlazadaSimple *L, int dato1, char *dato2){
  * @brief Añade un elemento al final de la lista
  * 
  * @param L Es la lista a añadir el elemento
- * @param dato1 El dato 1 que se le añade
- * @param dato2 El dato 2 que se le añade
+ * @param dato1 El dato que se le añade
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato1, char *dato2){
+listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato){
     listaEnlazadaSimple *aux = L;
 
     if(aux != NULL){
@@ -74,14 +68,12 @@ listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato1, char *dato2){
                 aux = aux->sig;
         }
         aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-        aux->sig->dato1 = dato1;
-        aux->sig->dato2 = dato2;
+        aux->sig->dato = dato;
         aux->sig->sig = NULL;
     }
     else{
         aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-        aux->dato1 = dato1;
-        aux->dato2 = dato2;
+        aux->dato = dato;
         aux->sig = NULL;
         L = aux;
     }
@@ -94,12 +86,11 @@ listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato1, char *dato2){
  * 
  * @param L Es la lista a añadir el elemento
  * @param posicion Es la posicion donde se añadirá el elemento
- * @param date1 El dato 1 que se le añade
- * @param dato2 El dato 2 que se le añade
+ * @param date1 El dato que se le añade
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato1, char *dato2){
+listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato){
     listaEnlazadaSimple *aux = L;
     
     if(aux != NULL){
@@ -113,19 +104,16 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
             if(i == posicion){
                 if(aux->sig != NULL){
                     listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux2->dato1 = aux->sig->dato1;
-                    aux2->dato2 = aux->sig->dato2;
+                    aux2->dato = aux->sig->dato;
                     aux2->sig = aux->sig->sig;
 
                     aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux->sig->dato1 = dato1;
-                    aux->sig->dato2 = dato2;
+                    aux->sig->dato = dato;
                     aux->sig->sig = aux2;      
                 }
                 else{
                     aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux->sig->dato1 = dato1;
-                    aux->sig->dato2 = dato2;
+                    aux->sig->dato = dato;
                     aux->sig->sig = NULL;
                 }
 
@@ -137,8 +125,7 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
         }
         else{
             listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-            aux2->dato1 = dato1;
-            aux2->dato2 = dato2;
+            aux2->dato = dato;
             aux2->sig = aux;
             return aux2;
         }
@@ -146,8 +133,7 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
     else{
         if(posicion == 0){
             aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-            aux->dato1 = dato1;
-            aux->dato2 = dato2;
+            aux->dato = dato;
             aux->sig = NULL;
             L = aux;
         }
@@ -246,6 +232,60 @@ listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
     }
 }
 
+//----------------------------------------- BUSCAR ---------------------------------------------
+
+/**
+ * @brief Permite saber la posicion de un elemento según su contenido
+ * 
+ * @param L La lista a buscar
+ * @param dato El dato que se usará para buscar la posición
+ * @return Retorna la posición
+ */
+int search_date_position(listaEnlazadaSimple *L, int dato){
+    listaEnlazadaSimple *aux = L;
+    int largo = len(L);
+    int i=0;
+    int position = -1;
+    while(i<largo){
+        if(aux->dato == dato){
+            position = i;
+            i = largo;
+        }
+        else{
+            aux = aux->sig;
+            i++;
+        }
+    }
+    if(position != -1){
+        return position;
+    }
+    printf("No se encontró el dato\n");
+    return position;
+}
+
+/**
+ * @brief Permite saber el contenido de la lista (El dato) según su posición
+ * 
+ * @param L La lista a buscar
+ * @param position La posición que se usará para buscar el dato
+ * @return Retorna el dato
+ */
+int search_position_date(listaEnlazadaSimple *L, int position){
+    listaEnlazadaSimple *aux = L;
+    int largo = len(L);
+    if(largo > position){
+        int i=0;
+        while(i<position){
+            aux = aux->sig;
+            i++;
+        }
+        return aux->dato;
+    }
+    else{
+        printf("No se puede acceder a esa posición\n");
+        return -1;
+    }
+}
 
 //----------------------------------------- OTROS ---------------------------------------------
 
@@ -257,7 +297,7 @@ listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
 void show(listaEnlazadaSimple *L){
     listaEnlazadaSimple *aux = L;
     while(aux != NULL){
-        printf("dato1: %d       dato2: %s\n", aux->dato1, aux->dato2);
+        printf("dato: %d\n", aux->dato);
         aux = aux->sig;
     }
     printf("\n");
@@ -295,44 +335,48 @@ void liberar(listaEnlazadaSimple *L){
     }
 }
 
+
 int main(){
 
     listaEnlazadaSimple *L1 = NULL;
 
-    L1 = add_start(L1, 1, "1");
-    L1 = add_start(L1, 2, "2");
-    L1 = add_start(L1, 3, "3");
-    L1 = add_start(L1, 4, "4");
+    L1 = add_start(L1, 1);
+    L1 = add_start(L1, 2);
+    L1 = add_start(L1, 3);
+    L1 = add_start(L1, 4);
     L1 = remove_queue(L1);
     L1 = remove_queue(L1);
 
     printf("Largo = %d\n", len(L1));
+    printf("posicion buscada: %d\n", search_date_position(L1, 1));
     show(L1);
     
 
     listaEnlazadaSimple *L2 = NULL;
 
-    L2 = add_end(L2, 1, "1");
-    L2 = add_end(L2, 2, "2");
-    L2 = add_end(L2, 3, "3");
-    L2 = add_end(L2, 4, "4");
+    L2 = add_end(L2, 1);
+    L2 = add_end(L2, 2);
+    L2 = add_end(L2, 3);
+    L2 = add_end(L2, 4);
     L2 = remove_stack(L2);
     L2 = remove_stack(L2);
 
     printf("Largo = %d\n", len(L2));
+    printf("dato buscado: %d\n", search_position_date(L2, 2));
     show(L2);
 
 
     listaEnlazadaSimple *L3 = NULL;
 
-    L3 = add_position(L3, 0, 1, "1");
-    L3 = add_position(L3, 1, 2, "2");
-    L3 = add_position(L3, 0, 3, "3");
-    L3 = add_position(L3, 2, 4, "4");
+    L3 = add_position(L3, 0, 1);
+    L3 = add_position(L3, 1, 2);
+    L3 = add_position(L3, 0, 3);
+    L3 = add_position(L3, 2, 4);
     L3 = remove_position(L3, 2);
     L3 = remove_position(L3, 2);
 
     printf("Largo = %d\n", len(L3));
+    printf("posicion buscada: %d\n", search_date_position(L3, 0));
     show(L3);
 
 
