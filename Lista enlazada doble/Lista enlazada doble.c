@@ -1,7 +1,7 @@
 /**
- * @file Lista enlazada simple.c
+ * @file Lista enlazada doble.c
  * @author Simón Sáez (NaYxXaXx) - nayxxaxx789super@gmail.com
- * @brief TDA de una lista enlazada simple (Pila, Cola y por posicion)
+ * @brief TDA de una lista enlazada doble
  * @version 0.1
  * @date 2022-03-16
  * 
@@ -9,20 +9,19 @@
  * 
  */
 
-// Falta crear mejor testeos a los códigos, se han probado con casos mostrados en el main
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 /**
- * @brief Estructura de la lista enlazada simple
+ * @brief Estructura de la lista enlazada doble
  * 
  */
-typedef struct listaEnlazadaSimple{
+typedef struct listaEnlazadaDoble{
     int dato;
-    struct listaEnlazadaSimple *sig;
-}listaEnlazadaSimple;
+    struct listaEnlazadaDoble *ant;
+    struct listaEnlazadaDoble *sig;
+}listaEnlazadaDoble;
 
 //----------------------------------------- AGREGAR ---------------------------------------------
 
@@ -34,20 +33,24 @@ typedef struct listaEnlazadaSimple{
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_start(listaEnlazadaSimple *L, int dato){
+listaEnlazadaDoble *add_start(listaEnlazadaDoble *L, int dato){
     
     if(L != NULL){
-        listaEnlazadaSimple *aux;
+        listaEnlazadaDoble *aux;
 
-        aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+        aux = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
         aux->dato = dato;
+        aux->ant = NULL;
         aux->sig = L;
+
+        L->ant = aux;
 
         return aux;
     }
     else{
-        L = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+        L = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
         L->dato = dato;
+        L->ant = NULL;
         L->sig = NULL;
 
         return L;
@@ -62,20 +65,22 @@ listaEnlazadaSimple *add_start(listaEnlazadaSimple *L, int dato){
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato){
-    listaEnlazadaSimple *aux = L;
+listaEnlazadaDoble *add_end(listaEnlazadaDoble *L, int dato){
+    listaEnlazadaDoble *aux = L;
 
     if(aux != NULL){
         while(aux->sig!=NULL){
                 aux = aux->sig;
         }
-        aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+        aux->sig = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
         aux->sig->dato = dato;
+        aux->sig->ant = aux;
         aux->sig->sig = NULL;
     }
     else{
-        aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+        aux = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
         aux->dato = dato;
+        aux->ant = NULL;
         aux->sig = NULL;
         L = aux;
     }
@@ -92,8 +97,8 @@ listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato){
  * @return Se retorna la lista con el elemento
  * 
  */
-listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato){
-    listaEnlazadaSimple *aux = L;
+listaEnlazadaDoble *add_position(listaEnlazadaDoble *L, int posicion, int dato){
+    listaEnlazadaDoble *aux = L;
     
     if(aux != NULL){
         if(posicion!=0){
@@ -105,17 +110,21 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
             
             if(i == posicion){
                 if(aux->sig != NULL){
-                    listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+                    listaEnlazadaDoble *aux2 = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
                     aux2->dato = aux->sig->dato;
                     aux2->sig = aux->sig->sig;
 
-                    aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+                    aux->sig = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
                     aux->sig->dato = dato;
-                    aux->sig->sig = aux2;      
+                    aux->sig->ant = aux;
+                    aux->sig->sig = aux2;     
+
+                    aux2->ant = aux->sig; 
                 }
                 else{
-                    aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+                    aux->sig = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
                     aux->sig->dato = dato;
+                    aux->sig->ant = aux;
                     aux->sig->sig = NULL;
                 }
 
@@ -126,16 +135,19 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
             }
         }
         else{
-            listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+            listaEnlazadaDoble *aux2 = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
             aux2->dato = dato;
+            aux2->ant = NULL;
             aux2->sig = aux;
+            aux->ant = aux2;
             return aux2;
         }
     }
     else{
         if(posicion == 0){
-            aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+            aux = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
             aux->dato = dato;
+            aux->ant = NULL;
             aux->sig = NULL;
             L = aux;
         }
@@ -154,15 +166,15 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
  * @param L La lista que se le eliminará el elemento
  * @return Devuelve la lista con el elemento eliminado
  */
-listaEnlazadaSimple *remove_stack(listaEnlazadaSimple *L){
+listaEnlazadaDoble *remove_stack(listaEnlazadaDoble *L){
     if(L != NULL){
-        listaEnlazadaSimple *aux = L;
-        while(aux->sig->sig != NULL){
+        listaEnlazadaDoble *aux = L;
+        while(aux->sig != NULL){
             aux = aux->sig;
         }
-        listaEnlazadaSimple *aux2 = aux->sig->sig;
+        listaEnlazadaDoble *aux2 = aux->ant;
         free(aux->sig);
-        aux->sig = aux2;
+        aux2->sig = NULL;
 
         return L;
     }
@@ -179,10 +191,13 @@ listaEnlazadaSimple *remove_stack(listaEnlazadaSimple *L){
  * @param L La lista que se le eliminará el elemento
  * @return Devuelve la lista con el elemento eliminado
  */
-listaEnlazadaSimple *remove_queue(listaEnlazadaSimple *L){
+listaEnlazadaDoble *remove_queue(listaEnlazadaDoble *L){
     if(L != NULL){
-        listaEnlazadaSimple *aux = L->sig;
+        listaEnlazadaDoble *aux = L->sig;
         free(L);
+
+        aux->ant = NULL;
+
         return aux; 
     }
     else{
@@ -197,25 +212,25 @@ listaEnlazadaSimple *remove_queue(listaEnlazadaSimple *L){
  * @param L La lista que se le eliminará el elemento
  * @return Devuelve la lista con el elemento eliminado
  */
-listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
+listaEnlazadaDoble *remove_position(listaEnlazadaDoble *L, int posicion){
     if(L != NULL){
         if(posicion != 0){
             int i = 1;
-            listaEnlazadaSimple *aux = L;
+            listaEnlazadaDoble *aux = L;
             while(aux->sig != NULL && i != posicion){
                 aux = aux->sig;
                 i++;
             }
             if(i == posicion){
                 if(aux->sig != NULL){
-                    listaEnlazadaSimple *aux2 = aux->sig->sig;
+                    listaEnlazadaDoble *aux2 = aux->sig->sig;
                     free(aux->sig);
                     aux->sig = aux2;
                 }
                 else{
-                    // Arreglar, el borrar el último elemento no se coloca al elemento anterios que el sig
-                    // sea NULL
+                    listaEnlazadaDoble *aux2 = aux->ant;
                     free(aux->sig);
+                    aux2->sig = NULL;
                 }
                 return L;
             }
@@ -225,8 +240,9 @@ listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
             }
         }
         else{
-            listaEnlazadaSimple *aux = L->sig;
+            listaEnlazadaDoble *aux = L->sig;
             free(L);
+            aux->ant = NULL;
             return aux;
         }
     }
@@ -243,8 +259,8 @@ listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
  * 
  * @param L La lista a mostrar
  */
-void show(listaEnlazadaSimple *L){
-    listaEnlazadaSimple *aux = L;
+void show(listaEnlazadaDoble *L){
+    listaEnlazadaDoble *aux = L;
     while(aux != NULL){
         printf("dato: %d\n", aux->dato);
         aux = aux->sig;
@@ -253,13 +269,29 @@ void show(listaEnlazadaSimple *L){
 }
 
 /**
+ * @brief Muestra las ubicaciones de memoria de la lista
+ * 
+ * @param L La lista a mostrar
+ */
+void showMemory(listaEnlazadaDoble *L){
+    listaEnlazadaDoble *aux = L;
+    printf("Ant\t\tHere\t\tSig\n");
+    while(aux != NULL){
+        printf("%p\t%p\t%p\n", aux->ant, aux, aux->sig);
+        aux = aux->sig;
+    }
+    printf("\n");
+}
+
+
+/**
  * @brief Calcula el largo de la lista
  * 
  * @param L La lista a calcular el largo
  * @return El largo de la lista
  */
-int len(listaEnlazadaSimple *L){
-    listaEnlazadaSimple *aux = L;
+int len(listaEnlazadaDoble *L){
+    listaEnlazadaDoble *aux = L;
     int contador = 0;
     while (aux != NULL){
         contador++;
@@ -274,16 +306,15 @@ int len(listaEnlazadaSimple *L){
  * 
  * @param L La lista a liberar
  */
-void liberar(listaEnlazadaSimple *L){
-    listaEnlazadaSimple *aux = L;
-    listaEnlazadaSimple *aux2;
+void liberar(listaEnlazadaDoble *L){
+    listaEnlazadaDoble *aux = L;
+    listaEnlazadaDoble *aux2;
     while(aux != NULL){
         aux2 = aux->sig;
         free(aux);
         aux = aux2;
     }
 }
-
 
 //----------------------------------------- BUSCAR ---------------------------------------------
 
@@ -294,8 +325,8 @@ void liberar(listaEnlazadaSimple *L){
  * @param dato El dato que se usará para buscar la posición
  * @return Retorna la posición
  */
-int search_date_position(listaEnlazadaSimple *L, int dato){
-    listaEnlazadaSimple *aux = L;
+int search_date_position(listaEnlazadaDoble *L, int dato){
+    listaEnlazadaDoble *aux = L;
     int largo = len(L);
     int i=0;
     int position = -1;
@@ -323,8 +354,8 @@ int search_date_position(listaEnlazadaSimple *L, int dato){
  * @param position La posición que se usará para buscar el dato
  * @return Retorna el dato
  */
-int search_position_date(listaEnlazadaSimple *L, int position){
-    listaEnlazadaSimple *aux = L;
+int search_position_date(listaEnlazadaDoble *L, int position){
+    listaEnlazadaDoble *aux = L;
     int largo = len(L);
     if(largo > position){
         int i=0;
@@ -342,7 +373,7 @@ int search_position_date(listaEnlazadaSimple *L, int position){
 
 int main(){
 
-    listaEnlazadaSimple *L1 = NULL;
+    listaEnlazadaDoble *L1 = NULL;
 
     L1 = add_start(L1, 1);
     L1 = add_start(L1, 2);
@@ -354,9 +385,10 @@ int main(){
     printf("Largo = %d\n", len(L1));
     printf("posicion buscada: %d\n", search_date_position(L1, 1));
     show(L1);
+    showMemory(L1);
     
 
-    listaEnlazadaSimple *L2 = NULL;
+    listaEnlazadaDoble *L2 = NULL;
 
     L2 = add_end(L2, 1);
     L2 = add_end(L2, 2);
@@ -368,9 +400,10 @@ int main(){
     printf("Largo = %d\n", len(L2));
     printf("dato buscado: %d\n", search_position_date(L2, 2));
     show(L2);
+    showMemory(L2);
 
 
-    listaEnlazadaSimple *L3 = NULL;
+    listaEnlazadaDoble *L3 = NULL;
 
     L3 = add_position(L3, 0, 1);
     L3 = add_position(L3, 1, 2);
@@ -382,6 +415,7 @@ int main(){
     printf("Largo = %d\n", len(L3));
     printf("posicion buscada: %d\n", search_date_position(L3, 0));
     show(L3);
+    showMemory(L3);
 
 
     liberar(L1);
