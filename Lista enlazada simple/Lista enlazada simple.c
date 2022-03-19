@@ -94,42 +94,39 @@ listaEnlazadaSimple *add_end(listaEnlazadaSimple *L, int dato){
  */
 listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato){
     listaEnlazadaSimple *aux = L;
-    
-    if(aux != NULL){
-        if(posicion!=0){
-            int i = 1;
-            while(aux->sig != NULL && i != posicion){
-                    aux = aux->sig;
-                    i++;
-            }
-            
-            if(i == posicion){
-                if(aux->sig != NULL){
-                    listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux2->dato = aux->sig->dato;
-                    aux2->sig = aux->sig->sig;
+    if(L != NULL){
+        int i = 0;
+        listaEnlazadaSimple *aux2;
+        aux2 = NULL;
+        while(aux != NULL && i != posicion){
+            aux2 = aux;
+            aux = aux->sig;
+            i++;
+        }
+        if(i == posicion){
+            if(aux != NULL){
+                listaEnlazadaSimple *aux3 = aux;
 
-                    aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux->sig->dato = dato;
-                    aux->sig->sig = aux2;      
-                }
-                else{
-                    aux->sig = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-                    aux->sig->dato = dato;
-                    aux->sig->sig = NULL;
-                }
+                aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+                aux->dato = dato;
+                aux->sig = aux3;
 
-    
+                if(aux2 == NULL){
+                    return aux;
+                }
+                aux2->sig=aux;
             }
             else{
-                printf("No se puede añadir el elemento, no se puede llegar a esa posición");
+                aux = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
+                aux->dato = dato;
+                aux->sig = NULL;
+                aux2->sig = aux;
             }
+
+
         }
         else{
-            listaEnlazadaSimple *aux2 = (listaEnlazadaSimple *)malloc(sizeof(listaEnlazadaSimple));
-            aux2->dato = dato;
-            aux2->sig = aux;
-            return aux2;
+            printf("No se puede a%cadir el elemento, no se puede llegar a esa posici%cn", 164,162);
         }
     }
     else{
@@ -140,7 +137,7 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
             L = aux;
         }
         else{
-            printf("No se puede añadir el elemento, no se puede llegar a esa posición");
+            printf("No se puede a%cadir el elemento, no se puede llegar a esa posici%cn", 164,162);
         }
     }
 
@@ -191,51 +188,6 @@ listaEnlazadaSimple *remove_queue(listaEnlazadaSimple *L){
     }
 }
 
-/**
- * @brief Elimina el elemento en una posición de la lista
- * 
- * @param L La lista que se le eliminará el elemento
- * @return Devuelve la lista con el elemento eliminado
- */
-listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
-    if(L != NULL){
-        if(posicion != 0){
-            int i = 1;
-            listaEnlazadaSimple *aux = L;
-            while(aux->sig != NULL && i != posicion){
-                aux = aux->sig;
-                i++;
-            }
-            if(i == posicion){
-                if(aux->sig != NULL){
-                    listaEnlazadaSimple *aux2 = aux->sig->sig;
-                    free(aux->sig);
-                    aux->sig = aux2;
-                }
-                else{
-                    // Arreglar, el borrar el último elemento no se coloca al elemento anterios que el sig
-                    // sea NULL
-                    free(aux->sig);
-                }
-                return L;
-            }
-            else{
-                printf("No existe esa posicion");
-                return L;
-            }
-        }
-        else{
-            listaEnlazadaSimple *aux = L->sig;
-            free(L);
-            return aux;
-        }
-    }
-    else{
-        printf("No hay elementos para borrar");
-        return L;
-    }
-}
-
 //----------------------------------------- OTROS ---------------------------------------------
 
 /**
@@ -251,6 +203,22 @@ void show(listaEnlazadaSimple *L){
     }
     printf("\n");
 }
+
+/**
+ * @brief Muestra las ubicaciones de memoria de la lista
+ * 
+ * @param L La lista a mostrar
+ */
+void showMemory(listaEnlazadaSimple *L){
+    listaEnlazadaSimple *aux = L;
+    printf("Here\t\tSig\n");
+    while(aux != NULL){
+        printf("%p\t%p\n", aux, aux->sig);
+        aux = aux->sig;
+    }
+    printf("\n");
+}
+
 
 /**
  * @brief Calcula el largo de la lista
@@ -284,7 +252,47 @@ void liberar(listaEnlazadaSimple *L){
     }
 }
 
-
+/**
+ * @brief Elimina el elemento en una posición de la lista
+ * 
+ * @param L La lista que se le eliminará el elemento
+ * @return Devuelve la lista con el elemento eliminado
+ */
+listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
+    if(L != NULL){
+        int i = 0;
+        listaEnlazadaSimple *aux = L;
+        listaEnlazadaSimple *aux2 = NULL;
+        while(aux != NULL && i != posicion){
+            aux2 = aux;
+            aux = aux->sig;
+            i++;
+        }
+        if(i == posicion){
+            if(aux != NULL){
+                listaEnlazadaSimple *aux3 = aux->sig;
+                free(aux);
+                if(aux2 == NULL){
+                    return aux3;
+                }
+                aux2->sig = aux3;
+            }
+            else{
+                free(aux);
+                aux2->sig = NULL;
+            }
+            return L;
+        }
+        else{
+            printf("No existe esa posicion");
+            return L;
+        }
+    }
+    else{
+        printf("No hay elementos para borrar");
+        return L;
+    }
+}
 //----------------------------------------- BUSCAR ---------------------------------------------
 
 /**
@@ -341,20 +349,27 @@ int search_position_date(listaEnlazadaSimple *L, int position){
 }
 
 int main(){
-
+    
     listaEnlazadaSimple *L1 = NULL;
 
     L1 = add_start(L1, 1);
     L1 = add_start(L1, 2);
     L1 = add_start(L1, 3);
     L1 = add_start(L1, 4);
-    L1 = remove_queue(L1);
-    L1 = remove_queue(L1);
-
     printf("Largo = %d\n", len(L1));
-    printf("posicion buscada: %d\n", search_date_position(L1, 1));
     show(L1);
+    showMemory(L1);
+
+    L1 = remove_queue(L1);
+    L1 = remove_queue(L1);
+    printf("Largo = %d\n", len(L1));
+    show(L1);
+    showMemory(L1);
+
+    printf("posicion buscada: %d\n", search_date_position(L1, 1));
     
+    printf("---------------------------------------------");
+    //------------------------------------------
 
     listaEnlazadaSimple *L2 = NULL;
 
@@ -362,13 +377,21 @@ int main(){
     L2 = add_end(L2, 2);
     L2 = add_end(L2, 3);
     L2 = add_end(L2, 4);
-    L2 = remove_stack(L2);
-    L2 = remove_stack(L2);
-
     printf("Largo = %d\n", len(L2));
-    printf("dato buscado: %d\n", search_position_date(L2, 2));
     show(L2);
+    showMemory(L2);
 
+    L2 = remove_stack(L2);
+    L2 = remove_stack(L2);
+    printf("Largo = %d\n", len(L2));
+    show(L2);
+    showMemory(L2);
+
+    printf("dato buscado: %d\n", search_position_date(L2, 2));
+    
+
+    printf("---------------------------------------------");
+    //---------------------------------------------
 
     listaEnlazadaSimple *L3 = NULL;
 
@@ -376,12 +399,17 @@ int main(){
     L3 = add_position(L3, 1, 2);
     L3 = add_position(L3, 0, 3);
     L3 = add_position(L3, 2, 4);
-    L3 = remove_position(L3, 2);
-    L3 = remove_position(L3, 2);
-
     printf("Largo = %d\n", len(L3));
-    printf("posicion buscada: %d\n", search_date_position(L3, 0));
     show(L3);
+    showMemory(L3);
+    
+    L3 = remove_position(L3, 0);
+    L3 = remove_position(L3, 0);
+    printf("Largo = %d\n", len(L3));
+    show(L3);
+    showMemory(L3);
+
+    printf("posicion buscada: %d\n", search_date_position(L3, 4));
 
 
     liberar(L1);
