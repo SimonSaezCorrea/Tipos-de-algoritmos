@@ -9,6 +9,8 @@
  * 
  */
 
+// Falta crear mejor testeos a los códigos, se han probado con casos mostrados en el main
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,46 +103,48 @@ listaEnlazadaDoble *add_position(listaEnlazadaDoble *L, int posicion, int dato){
     listaEnlazadaDoble *aux = L;
     
     if(aux != NULL){
-        if(posicion!=0){
-            int i = 1;
-            while(aux->sig != NULL && i != posicion){
-                    aux = aux->sig;
-                    i++;
-            }
-            
-            if(i == posicion){
-                if(aux->sig != NULL){
-                    listaEnlazadaDoble *aux2 = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
-                    aux2->dato = aux->sig->dato;
-                    aux2->sig = aux->sig->sig;
+        int i = 0;
+        listaEnlazadaDoble *auxEspecial = aux;
+        while(aux != NULL && i != posicion){
+            auxEspecial = aux;
+            aux = aux->sig;
+            i++;
+        }
+        
+        if(i == posicion){
+            if(aux != NULL){
+                listaEnlazadaDoble *aux2 = aux; //El elemento que se correra
+                //listaEnlazadaDoble *aux3 = aux->ant; //El elemento anterior al que se correra
 
-                    aux->sig = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
-                    aux->sig->dato = dato;
-                    aux->sig->ant = aux;
-                    aux->sig->sig = aux2;     
+                //Creo de manera que se coloque un nuevo elemento en la posicion de ahí
+                aux = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
+                aux->dato = dato;
+                aux->ant = aux2->ant;
+                aux->sig = aux2;     
 
-                    aux2->ant = aux->sig; 
+                //Corrigo las ubicaciones de memoria de los siguientes y anteriores respectivos
+                aux2->ant = aux;
+
+                if(aux->ant != NULL){
+                    aux->ant->sig = aux;
                 }
                 else{
-                    aux->sig = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
-                    aux->sig->dato = dato;
-                    aux->sig->ant = aux;
-                    aux->sig->sig = NULL;
+                    return aux;
                 }
-
-    
             }
             else{
-                printf("No se puede añadir el elemento, no se puede llegar a esa posición");
+                aux = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
+                aux->dato = dato;
+                aux->ant = auxEspecial;
+                aux->sig = NULL;
+
+                auxEspecial->sig = aux;
             }
+
+
         }
         else{
-            listaEnlazadaDoble *aux2 = (listaEnlazadaDoble *)malloc(sizeof(listaEnlazadaDoble));
-            aux2->dato = dato;
-            aux2->ant = NULL;
-            aux2->sig = aux;
-            aux->ant = aux2;
-            return aux2;
+            printf("No se puede añadir el elemento, no se puede llegar a esa posición\n");
         }
     }
     else{
@@ -179,7 +183,7 @@ listaEnlazadaDoble *remove_stack(listaEnlazadaDoble *L){
         return L;
     }
     else{
-        printf("No hay elementos para borrar");
+        printf("No hay elementos para borrar\n");
         return L;
     }
     
@@ -201,7 +205,7 @@ listaEnlazadaDoble *remove_queue(listaEnlazadaDoble *L){
         return aux; 
     }
     else{
-        printf("No hay elementos para borrar");
+        printf("No hay elementos para borrar\n");
         return L;
     }
 }
@@ -214,40 +218,34 @@ listaEnlazadaDoble *remove_queue(listaEnlazadaDoble *L){
  */
 listaEnlazadaDoble *remove_position(listaEnlazadaDoble *L, int posicion){
     if(L != NULL){
-        if(posicion != 0){
-            int i = 1;
-            listaEnlazadaDoble *aux = L;
-            while(aux->sig != NULL && i != posicion){
-                aux = aux->sig;
-                i++;
-            }
-            if(i == posicion){
-                if(aux->sig != NULL){
-                    listaEnlazadaDoble *aux2 = aux->sig->sig;
-                    free(aux->sig);
-                    aux->sig = aux2;
+        int i = 0;
+        listaEnlazadaDoble *aux = L;
+        while(aux != NULL && i != posicion){
+            aux = aux->sig;
+            i++;
+        }
+        if(i == posicion){
+            if(aux != NULL){
+                listaEnlazadaDoble *aux2 = aux->sig;
+                listaEnlazadaDoble *aux3 = aux->ant;
+                free(aux);
+                aux3->sig = aux2;
+                if(aux2 != NULL){
+                    aux2->ant = aux3;
                 }
-                else{
-                    listaEnlazadaDoble *aux2 = aux->ant;
-                    free(aux->sig);
-                    aux2->sig = NULL;
-                }
-                return L;
             }
             else{
-                printf("No existe esa posicion");
-                return L;
+                printf("No existe esa posicion\n");
             }
+            return L;
         }
         else{
-            listaEnlazadaDoble *aux = L->sig;
-            free(L);
-            aux->ant = NULL;
-            return aux;
+            printf("No existe esa posicion\n");
+            return L;
         }
     }
     else{
-        printf("No hay elementos para borrar");
+        printf("No hay elementos para borrar\n");
         return L;
     }
 }
@@ -372,21 +370,27 @@ int search_position_date(listaEnlazadaDoble *L, int position){
 }
 
 int main(){
-
+    
     listaEnlazadaDoble *L1 = NULL;
 
     L1 = add_start(L1, 1);
     L1 = add_start(L1, 2);
     L1 = add_start(L1, 3);
     L1 = add_start(L1, 4);
-    L1 = remove_queue(L1);
-    L1 = remove_queue(L1);
-
     printf("Largo = %d\n", len(L1));
-    printf("posicion buscada: %d\n", search_date_position(L1, 1));
     show(L1);
     showMemory(L1);
+
+    L1 = remove_queue(L1);
+    L1 = remove_queue(L1);
+    printf("Largo = %d\n", len(L1));
+    show(L1);
+    showMemory(L1);
+
+    printf("posicion buscada: %d\n", search_date_position(L1, 1));
     
+    printf("---------------------------------------------\n");
+    //------------------------------------------
 
     listaEnlazadaDoble *L2 = NULL;
 
@@ -394,34 +398,44 @@ int main(){
     L2 = add_end(L2, 2);
     L2 = add_end(L2, 3);
     L2 = add_end(L2, 4);
-    L2 = remove_stack(L2);
-    L2 = remove_stack(L2);
-
     printf("Largo = %d\n", len(L2));
-    printf("dato buscado: %d\n", search_position_date(L2, 2));
     show(L2);
     showMemory(L2);
 
+    L2 = remove_stack(L2);
+    L2 = remove_stack(L2);
+    printf("Largo = %d\n", len(L2));
+    show(L2);
+    showMemory(L2);
 
+    printf("dato buscado: %d\n", search_position_date(L2, 2));
+
+    printf("---------------------------------------------\n");
+    //------------------------------------------
+    
     listaEnlazadaDoble *L3 = NULL;
 
     L3 = add_position(L3, 0, 1);
     L3 = add_position(L3, 1, 2);
-    L3 = add_position(L3, 0, 3);
-    L3 = add_position(L3, 2, 4);
-    L3 = remove_position(L3, 2);
-    L3 = remove_position(L3, 2);
-
+    L3 = add_position(L3, 2, 3);
+    L3 = add_position(L3, 0, 4);
     printf("Largo = %d\n", len(L3));
-    printf("posicion buscada: %d\n", search_date_position(L3, 0));
     show(L3);
     showMemory(L3);
 
+    L3 = remove_position(L3, 1);
+    L3 = remove_position(L3, 1);
+    printf("Largo = %d\n", len(L3));
+    show(L3);
+    showMemory(L3);
 
-    liberar(L1);
+    //printf("posicion buscada: %d\n", search_date_position(L3, 1));
 
-    liberar(L2);
 
+    //------------------------------------------
+
+    //liberar(L1);
+    //liberar(L2);
     liberar(L3);
 
     return 0;

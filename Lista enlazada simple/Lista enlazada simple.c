@@ -126,7 +126,7 @@ listaEnlazadaSimple *add_position(listaEnlazadaSimple *L, int posicion, int dato
 
         }
         else{
-            printf("No se puede a%cadir el elemento, no se puede llegar a esa posici%cn", 164,162);
+            printf("No se puede a%cadir el elemento, no se puede llegar a esa posici%cn\n", 164,162);
         }
     }
     else{
@@ -164,7 +164,7 @@ listaEnlazadaSimple *remove_stack(listaEnlazadaSimple *L){
         return L;
     }
     else{
-        printf("No hay elementos para borrar");
+        printf("No hay elementos para borrar\n");
         return L;
     }
     
@@ -183,10 +183,53 @@ listaEnlazadaSimple *remove_queue(listaEnlazadaSimple *L){
         return aux; 
     }
     else{
-        printf("No hay elementos para borrar");
+        printf("No hay elementos para borrar\n");
         return L;
     }
 }
+
+/**
+ * @brief Elimina el elemento en una posición de la lista
+ * 
+ * @param L La lista que se le eliminará el elemento
+ * @return Devuelve la lista con el elemento eliminado
+ */
+listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
+    if(L != NULL){
+        int i = 0;
+        listaEnlazadaSimple *aux = L;
+        listaEnlazadaSimple *aux2 = NULL;
+        while(aux != NULL && i != posicion){
+            aux2 = aux;
+            aux = aux->sig;
+            i++;
+        }
+        if(i == posicion){
+            if(aux != NULL){
+                listaEnlazadaSimple *aux3 = aux->sig;
+                free(aux);
+                if(aux2 == NULL){
+                    return aux3;
+                }
+                aux2->sig = aux3;
+            }
+            else{
+                free(aux);
+                aux2->sig = NULL;
+            }
+            return L;
+        }
+        else{
+            printf("No existe esa posicion\n");
+            return L;
+        }
+    }
+    else{
+        printf("No hay elementos para borrar\n");
+        return L;
+    }
+}
+
 
 //----------------------------------------- OTROS ---------------------------------------------
 
@@ -252,47 +295,6 @@ void liberar(listaEnlazadaSimple *L){
     }
 }
 
-/**
- * @brief Elimina el elemento en una posición de la lista
- * 
- * @param L La lista que se le eliminará el elemento
- * @return Devuelve la lista con el elemento eliminado
- */
-listaEnlazadaSimple *remove_position(listaEnlazadaSimple *L, int posicion){
-    if(L != NULL){
-        int i = 0;
-        listaEnlazadaSimple *aux = L;
-        listaEnlazadaSimple *aux2 = NULL;
-        while(aux != NULL && i != posicion){
-            aux2 = aux;
-            aux = aux->sig;
-            i++;
-        }
-        if(i == posicion){
-            if(aux != NULL){
-                listaEnlazadaSimple *aux3 = aux->sig;
-                free(aux);
-                if(aux2 == NULL){
-                    return aux3;
-                }
-                aux2->sig = aux3;
-            }
-            else{
-                free(aux);
-                aux2->sig = NULL;
-            }
-            return L;
-        }
-        else{
-            printf("No existe esa posicion");
-            return L;
-        }
-    }
-    else{
-        printf("No hay elementos para borrar");
-        return L;
-    }
-}
 //----------------------------------------- BUSCAR ---------------------------------------------
 
 /**
@@ -413,9 +415,7 @@ int main(){
 
 
     liberar(L1);
-
     liberar(L2);
-
     liberar(L3);
 
     return 0;
